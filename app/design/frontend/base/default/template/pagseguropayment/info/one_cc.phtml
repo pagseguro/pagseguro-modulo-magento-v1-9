@@ -1,0 +1,46 @@
+<?php
+$code = $this->getMethod()->getCode();
+$info = $this->getInfo();
+$ccNumber = $this->getCcNumber();
+
+$ccType = $info->getCcType();
+$ccNumber = $info->decrypt($info->getCcNumberEnc());
+$ccNumber = substr($ccNumber, 0,6) . '****' . substr($ccNumber, -4);
+$installments = $info->getAdditionalInformation('cc_installments');
+?>
+
+<fieldset class="form-list">
+    <div id="payment_form_<?= $code ?>" class="case pagseguro-form">
+        <div class="card-entry">
+            <div class="entry-title">
+                <span><?= $this->__('Credit Card'); ?></span>
+            </div>
+
+            <p><?= $this->__('Card Number: %s', $ccNumber); ?></p>
+            <p><?= $this->__('Card Owner: %s', $info->getCcOwner()); ?></p>
+            <p><?= $this->__('Card Brand: %s', $info->getCcType()); ?></p>
+
+            <?php
+            $textInterest = '';
+            if ($interestRate = $info->getAdditionalInformation('cc_interest_rate'))
+                $textInterest = $this->__('(interest of %s)', $interestRate . '%');
+            ?>
+
+            <?php if (!$info->getAdditionalInformation('recurring_profile') && $installments): ?>
+                <p>
+                    <?= $this->__('Installments: %s', $installments.'x') ?>
+                    <?= $this->__('of %s', number_format($info->getAdditionalInformation('cc_installment_value'), 2, ',', '.'));?>
+                    <?= $textInterest;?>
+                </p>
+
+                <?php if ($totalWithInterest = $info->getAdditionalInformation('cc_total_with_interest')): ?>
+                    <p><?= $this->__('Total: %s', $this->helper('core')->currency($totalWithInterest)); ?></p>
+                <?php endif; ?>
+            <?php endif;?>
+
+            <?php if ($tid = $info->getAdditionalInformation('order_id')): ?>
+                <p><?= $this->__("TID: %s", $tid); ?></p>
+            <?php endif; ?>
+        </div>
+</fieldset>
+

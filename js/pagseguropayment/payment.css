@@ -1,0 +1,116 @@
+.pagseguro-payment-one-cc label {
+    width: 150px;
+}
+
+.pagseguro-payment-one-cc label > input{
+    display: none;
+}
+
+#payment_form_pagseguropayment-onecc .validate-cc-cvn{
+    width: 100px;
+}
+
+#payment_form_pagseguropayment-onecc {
+    margin: 10px 0 20px;
+}
+
+#payment_form_pagseguropayment-onecc.pagseguro-payment-one-cc {
+    position: relative;
+}
+
+.pagseguro-payment-cc input.pagseguro-cc-type {
+    display:none;
+}
+
+.pagseguro-payment-cc .radio-flags {
+    display: flex;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    background:#fff;
+    border:1px solid #ccc;
+    border-radius:3px;
+    margin-bottom:20px;
+    max-width: max-content;
+}
+
+.pagseguro-payment-cc .radio-flags img {
+    transition: 0.2s;
+    border-radius: 5px;
+    margin: 2px;
+    width: 60px;
+}
+
+.pagseguro-payment-cc .radio-flags .off {
+    filter: grayscale(100%);
+    border: none
+}
+
+.pagseguro-payment-cc .radio-flags .on {
+    filter: grayscale(0%);
+    transition: 0.2s;
+    border: 2px solid #f66;
+}
+
+.pagseguro-payment-cc .radio-flags .tit {
+    padding:0 10px;
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    align-self: center;
+}
+
+.pagseguro-payment-cc .radio-flags label {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+    max-width: 75px;
+    padding: 5px;
+    background: #fff;
+    margin: 0 6px 0 5px;
+}
+
+.pagseguro-payment-cc .radio-flags label:hover {
+    background:#eee
+}
+
+.pagseguro-payment-cc .radio-flags input {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    margin-right:0;
+    top:0
+}
+
+.pagseguro-payment-cc .radio-flags{
+    position: relative;
+}
+
+.pagseguro-payment-cc .radio-flags label .validation-advice{
+    position: absolute;
+    bottom:-20px;
+}
+
+.pagseguro-payment-cc .radio-flags .ico {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    height:60px;
+    width:75px;
+}
+
+.expiration {
+    width: 103px !important;
+}
+
+.pagseguro-card-entry {
+    padding-top: 1.5rem;
+}
+
+.save-card-button {
+    padding-bottom: 0.5rem;
+}

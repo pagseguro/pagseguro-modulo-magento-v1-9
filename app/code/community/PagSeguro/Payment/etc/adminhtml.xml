@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <sales>
+            <children>
+                <pagseguropayment translate="title" module="pagseguropayment">
+                    <title>PagSeguro - Transactions</title>
+                    <sort_order>200</sort_order>
+                    <action>pagseguropayment_admin/transactions/index</action>
+                </pagseguropayment>
+            </children>
+        </sales>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <sales>
+                        <children>
+                            <pagseguropayment translate="title" module="pagseguropayment">
+                                <title>PagSeguro - Transactions</title>
+                                <sort_order>200</sort_order>
+                                <action>pagseguropayment_admin/transactions/index</action>
+                            </pagseguropayment>
+                        </children>
+                    </sales>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <pagseguropayment translate="title" module="pagseguropayment">
+                                        <title>PagSeguro</title>
+                                    </pagseguropayment>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

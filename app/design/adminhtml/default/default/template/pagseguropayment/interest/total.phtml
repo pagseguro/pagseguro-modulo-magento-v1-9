@@ -1,0 +1,14 @@
+<?php
+$this->setPriceDataObject($this->getSource())
+?>
+
+<?php if ((float) $this->getSource()->getBasePagseguropaymentInterestAmount()): ?>
+    <tr>
+        <td class="label"><?= Mage::helper('pagseguropayment')->__('Interest') ?></td>
+        <td>
+            <?= $this->displayPrices(
+                $this->getSource()->getBasePagseguropaymentInterestAmount(), $this->getSource()->getPagseguropaymentInterestAmount()
+            ); ?>
+        </td>
+    </tr>
+<?php endif; ?>

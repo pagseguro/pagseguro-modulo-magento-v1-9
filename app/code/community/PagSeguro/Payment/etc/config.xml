@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to PagSeguro so we can send you a copy immediately.
+ *
+ * @category   PagSeguro
+ * @package    PagSeguro_Payment
+ * @author     PagSeguro
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <PagSeguro_Payment>
+            <version>1.0.0</version>
+        </PagSeguro_Payment>
+    </modules>
+
+    <global>
+        <blocks>
+            <pagseguropayment>
+                <class>PagSeguro_Payment_Block</class>
+            </pagseguropayment>
+        </blocks>
+
+        <helpers>
+            <pagseguropayment>
+                <class>PagSeguro_Payment_Helper</class>
+            </pagseguropayment>
+        </helpers>
+
+        <models>
+            <pagseguropayment>
+                <class>PagSeguro_Payment_Model</class>
+                <resourceModel>pagseguropayment_resource</resourceModel>
+            </pagseguropayment>
+            <pagseguropayment_resource>
+                <class>PagSeguro_Payment_Model_Resource</class>
+                <entities>
+                    <transaction>
+                        <table>pagseguropayment_transactions</table>
+                    </transaction>
+                    <card>
+                        <table>pagseguropayment_credit_cards</table>
+                    </card>
+                </entities>
+            </pagseguropayment_resource>
+        </models>
+
+        <resources>
+            <pagseguropayment_setup>
+                <setup>
+                    <module>PagSeguro_Payment</module>
+                    <class>Mage_Eav_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </pagseguropayment_setup>
+            <pagseguropayment_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </pagseguropayment_write>
+            <pagseguropayment_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </pagseguropayment_read>
+        </resources>
+
+        <events>
+            <sales_order_payment_cancel>
+                <observers>
+                    <pagseguropayment_cancel>
+                        <type>singleton</type>
+                        <class>pagseguropayment/observer</class>
+                        <method>salesOrderPaymentCancel</method>
+                    </pagseguropayment_cancel>
+                </observers>
+            </sales_order_payment_cancel>
+            <sales_order_payment_place_end>
+                <observers>
+                    <PagSeguro_Payment_place_end>
+                        <type>singleton</type>
+                        <class>pagseguropayment/observer</class>
+                        <method>salesOrderPaymentPlaceEnd</method>
+                    </PagSeguro_Payment_place_end>
+                </observers>
+            </sales_order_payment_place_end>
+        </events>
+
+        <sales>
+            <quote>
+                <totals>
+                    <pagseguropayment_interest>
+                        <class>pagseguropayment/total_quote_interest</class>
+                        <after>subtotal</after>
+                        <before>grand_total</before>
+                    </pagseguropayment_interest>
+                </totals>
+            </quote>
+            <order_invoice>
+                <totals>
+                    <pagseguropayment_interest>
+                        <class>pagseguropayment/total_invoice_interest</class>
+                        <after>subtotal</after>
+                        <before>grand_total</before>
+                    </pagseguropayment_interest>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <pagseguropayment_interest>
+                        <class>pagseguropayment/total_creditmemo_interest</class>
+                        <after>subtotal</after>
+                        <before>grand_total</before>
+                    </pagseguropayment_interest>
+                </totals>
+            </order_creditmemo>
+        </sales>
+
+        <pdf>
+            <totals>
+                <pagseguropayment_interest translate="title">
+                    <title>Interest</title>
+                    <source_field>pagseguropayment_interest_amount</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>202</sort_order>
+                </pagseguropayment_interest>
+            </totals>
+        </pdf>
+
+        <fieldsets>
+            <sales_convert_quote_address>
+                <pagseguropayment_interest_amount>
+                    <to_order>*</to_order>
+                </pagseguropayment_interest_amount>
+                <base_pagseguropayment_interest_amount>
+                    <to_order>*</to_order>
+                </base_pagseguropayment_interest_amount>
+            </sales_convert_quote_address>
+
+            <sales_convert_order>
+                <pagseguropayment_interest_amount>
+                    <to_invoice>*</to_invoice>
+                    <to_shipment>*</to_shipment>
+                </pagseguropayment_interest_amount>
+                <base_pagseguropayment_interest_amount>
+                    <to_invoice>*</to_invoice>
+                    <to_shipment>*</to_shipment>
+                </base_pagseguropayment_interest_amount>
+            </sales_convert_order>
+        </fieldsets>
+    </global>
+
+    <frontend>
+        <secure_url>
+            <pagseguropayment>/pagseguropayment/</pagseguropayment>
+        </secure_url>
+        <routers>
+            <pagseguropayment>
+                <use>standard</use>
+                <args>
+                    <module>PagSeguro_Payment</module>
+                    <frontName>pagseguropayment</frontName>
+                </args>
+            </pagseguropayment>
+        </routers>
+        <translate>
+            <modules>
+                <pagseguropayment>
+                    <files>
+                        <default>PagSeguro_Payment.csv</default>
+                    </files>
+                </pagseguropayment>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <pagseguropaymentpagseguropayment>
+                    <file>pagseguropayment.xml</file>
+                </pagseguropaymentpagseguropayment>
+            </updates>
+        </layout>
+    </frontend>
+
+    <adminhtml>
+        <translate>
+            <modules>
+                <pagseguropayment>
+                    <files>
+                        <default>PagSeguro_Payment.csv</default>
+                    </files>
+                </pagseguropayment>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <pagseguropayment>
+                    <file>pagseguropayment.xml</file>
+                </pagseguropayment>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <admin>
+        <routers>
+            <pagseguropayment_admin>
+                <use>admin</use>
+                <args>
+                    <module>PagSeguro_Payment_Adminhtml</module>
+                    <frontName>pagseguropayment_admin</frontName>
+                </args>
+            </pagseguropayment_admin>
+        </routers>
+    </admin>
+
+    <default>
+        <sales>
+            <totals_sort>
+                <pagseguropayment_interest>51</pagseguropayment_interest>
+            </totals_sort>
+        </sales>
+        <pagseguropayment>
+            <endpoints>
+                <charge>charges</charge>
+                <consult>charges/{{id}}</consult>
+                <capture>charges/{{id}}/capture/</capture>
+                <cancel>charges/{{id}}/cancel/</cancel>
+                <check_authentication>public-keys/card</check_authentication>
+                <orders>orders</orders>
+                <orders_consult>orders/{{id}}</orders_consult>
+                <orders_pay>orders/{{id}}/pay/</orders_pay>
+            </endpoints>
+        </pagseguropayment>
+
+        <payment>
+            <pagseguropayment_settings>
+                <api_url>https://api.pagseguro.com/</api_url>
+                <sandbox_url>https://sandbox.api.pagseguro.com/</sandbox_url>
+                <taxvat_customer_attribute>taxvat</taxvat_customer_attribute>
+                <cnpj_customer_attribute>taxvat</cnpj_customer_attribute>
+                <public_key>taxvat</public_key>
+            </pagseguropayment_settings>
+
+            <pagseguropayment_onecc>
+                <active>0</active>
+                <model>pagseguropayment/method_onecc</model>
+                <title>PagSeguro - Credit Card</title>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <show_cvv_saved_cards>1</show_cvv_saved_cards>
+                <authorized_order_status>processing</authorized_order_status>
+                <captured_order_status>processing</captured_order_status>
+                <stop_processing>1</stop_processing>
+                <max_installments>1</max_installments>
+            </pagseguropayment_onecc>
+
+            <pagseguropayment_twocc>
+                <active>0</active>
+                <model>pagseguropayment/method_twocc</model>
+                <title>PagSeguro - Two Credit Card</title>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <show_cvv_saved_cards>1</show_cvv_saved_cards>
+                <authorized_order_status>processing</authorized_order_status>
+                <captured_order_status>processing</captured_order_status>
+                <stop_processing>1</stop_processing>
+                <max_installments>1</max_installments>
+            </pagseguropayment_twocc>
+
+            <pagseguropayment_ticket>
+                <active>0</active>
+                <model>pagseguropayment/method_ticket</model>
+                <title>PagSeguro - Ticket</title>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <days_to_expire>3</days_to_expire>
+                <wating_order_status>pending</wating_order_status>
+                <paid_order_status>processing</paid_order_status>
+                <cancel_order_status>canceled</cancel_order_status>
+                <checkout_message>
+                    <![CDATA[<small>Pague sua compra à vista no boleto</small>
+                    <p>O link estará disponível nas informações do pedido em sua conta.</p>]]>
+                </checkout_message>
+            </pagseguropayment_ticket>
+
+            <pagseguropayment_pix>
+                <active>0</active>
+                <model>pagseguropayment/method_pix</model>
+                <title>PagSeguro - PIX</title>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <days_to_expire>1</days_to_expire>
+                <wating_order_status>pending</wating_order_status>
+                <paid_order_status>processing</paid_order_status>
+                <cancel_order_status>canceled</cancel_order_status>
+                <checkout_message>
+                    <![CDATA[<small>Pague sua compra à vista no PIX</small>
+                    <p>O link e o QR CODE estarão disponíveis nas informações do pedido em sua conta.</p>]]>
+                </checkout_message>
+            </pagseguropayment_pix>
+        </payment>
+    </default>
+
+    <crontab>
+        <jobs>
+            <pagseguropayment_consult_order_status>
+                <schedule>
+                    <cron_expr>*/30 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>pagseguropayment/cron::consultOrderStatus</model>
+                </run>
+            </pagseguropayment_consult_order_status>
+        </jobs>
+    </crontab>
+</config>

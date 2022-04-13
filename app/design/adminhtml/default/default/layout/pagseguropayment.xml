@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<layout version="1.0.2">
+    <pagseguropayment_default>
+        <reference name="head">
+            <action method="addItem">
+                <type>js_css</type><script>pagseguropayment/payment.css</script>
+            </action>
+        </reference>
+    </pagseguropayment_default>
+
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addJs"><script>pagseguropayment/payment.js</script></action>
+            <action method="addJs"><script>lib/jquery/jquery-1.12.1.min.js</script></action>
+            <action method="addJs"><script>lib/jquery/noconflict.js</script></action>
+            <action method="addItem"><type>js_css</type><script>pagseguropayment/payment.css</script></action>
+
+            <block type="core/text" name="fingerprint">
+                <action method="setText">
+                    <text>
+                        <![CDATA[<script type="text/javascript" src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_create_index>
+
+    <pagseguropayment_admin_transactions_index>
+        <reference name="content">
+            <block type="pagseguropayment/adminhtml_transactions" name="pagseguro.payment.transactions.grid"/>
+        </reference>
+    </pagseguropayment_admin_transactions_index>
+
+    <adminhtml_sales_order_view>
+        <update handle="pagseguropayment_default"/>
+        <reference name="order_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_view>
+
+    <adminhtml_sales_order_invoice_new>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+
+    <adminhtml_sales_order_invoice_view>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+
+    <adminhtml_sales_order_creditmemo_view>
+        <update handle="pagseguropayment_default"/>
+
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="pagseguropayment.interest" template="pagseguropayment/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
+</layout>

@@ -1,0 +1,51 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to PagSeguro so we can send you a copy immediately.
+ *
+ * @category   PagSeguro
+ * @package    PagSeguro_Payment
+ * @author     PagSeguro
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+/** @var PagSeguro_Payment_Block_Checkout_Ticket $this */
+$info = $this->getInfo();
+?>
+
+<strong><?= $this->escapeHtml($this->getMethod()->getTitle()) ?></strong>
+
+<?php if ($info): ?>
+    <?php $additionalInformation = $info->getAdditionalInformation();?>
+    <ul>
+        <?php if (isset($additionalInformation['transaction_id'])): ?>
+            <li>
+                <strong><?= $this->__("Transaction Id: %s", $this->escapeHtml($additionalInformation['transaction_id'])) ?></strong>
+            </li>
+        <?php endif; ?>
+
+        <?php if (isset($additionalInformation['pdf_ticket_url'])): ?>
+            <li>
+                <a href="<?= $this->escapeHtml($additionalInformation['pdf_ticket_url']); ?>" target="_blank">
+                    <?= $this->__('PDF Ticket Url');?>
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <?php if (isset($additionalInformation['png_ticket_url'])): ?>
+            <li>
+                <a href="<?= $this->escapeHtml($additionalInformation['png_ticket_url']); ?>" target="_blank">
+                    <?= $this->__('PNG Ticket Url');?>
+                </a>
+            </li>
+        <?php endif; ?>
+    </ul>
+<?php endif; ?>

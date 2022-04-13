@@ -1,0 +1,260 @@
+<?php
+/** @var PagSeguro_Payment_Block_Form_Onecc $this */
+$code = $this->getMethodCode();
+$isCurrentlySecure = Mage::app()->getStore()->isCurrentlySecure();
+$installments = $this->getCcInstalments();
+$quote = $this->_getHelper()->getSession()->getQuote();
+$baseGrandTotal = $quote->getBaseGrandTotal();
+$canSave = $this->_getHelper()->getConfig('cc_can_save', $code);
+$savedCards = $this->getSavedCards();
+$useEncryption = $this->_getHelper()->getConfig('use_pagseguro_encrypted_card', $code);
+$isAvailable = $this->_getHelper()->getMethodIsAvailable($code, $baseGrandTotal);
+?>
+<?php if (!$isAvailable['is_available']) : ?>
+    <fieldset class="form-list" id="fieldset_<?= $code ?>_unavailable">
+        <p><?= $this->__('Payment method not available! Grand total is not valid to installments amount') ?></p>
+        <p><?= $this->__("<strong>Grand Total:</strong> %s", $this->_getHelper()->formatCurrency($baseGrandTotal)) ?></p>
+
+        <?php if (isset($isAvailable['min_value'])) : ?>
+            <p><?= $this->__("<strong>Min value:</strong> %s", $this->_getHelper()->formatCurrency($isAvailable['min_value']))?></p>
+        <?php endif ;?>
+    </fieldset>
+<?php else : ?>
+
+<fieldset class="form-list">
+    <div id="payment_form_<?= $code ?>" class="case pagseguro-payment-one-cc pagseguro-payment-cc"
+         style="display:none;">
+        <div class="card-entry">
+            <div class="entry-title">
+                <span><?= $this->__('Credit Card'); ?></span>
+            </div>
+
+            <?php if (!$useEncryption && $canSave && $savedCards && $savedCards->getSize()) : ?>
+                <input type="hidden" name="payment[use_saved_card]" id="pagseguroUseSavedCard" value="0"/>
+
+                <div class="save-card-button">
+                    <a href="javascript:void(0)" id="useSavedCard">
+                        <?= $this->__('Use saved card') ?>
+                    </a>
+                </div>
+
+                <div class="save-card-button">
+                    <a href="javascript:void(0)" id="useNewCard" style="display:none">
+                        <?= $this->__('Use new card') ?>
+                    </a>
+                </div>
+
+                <div id="savedCards" class="input-box" style="display:none;">
+                    <div class="exp input-box">
+                        <h4><?= $this->__('Saved Cards') ?></h4>
+                        <div class="saved-card input-box">
+                            <label for="savedCard">
+                                <?= $this->__('Card Number') ?>
+                            </label>
+                            <select name="payment[cc_token]" id="savedCard">
+                                <option value="0"><?= $this->__('Choose...'); ?></option>
+                                <?php /** @var PagSeguro_Payment_Model_Card $card */ ?>
+                                <?php foreach ($savedCards as $card) : ?>
+                                    <option value="<?= $card->getId() ?>">
+                                        <?= $card->getDescription(); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="cvv-token input-box">
+                            <label for="savedCard_cci"><?= $this->__('CVV') ?></label>
+
+                            <input type="text"
+                                   title="<?= $this->__('CVV') ?>"
+                                   class="input-text cvv validate-cc-cvn"
+                                   id="savedCard_cci"
+                                   name="payment[cc_cid_sc]"/>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="cc_form">
+                <div class="input-box radio-flags">
+                    <?php foreach ($this->_getHelper()->getMethods() as $method) : ?>
+                        <?php $slug = $method['slug']; ?>
+                        <label>
+                            <input type="radio" name="payment[cc_type]" class="pagseguro-cc-type"
+                                   title="<?= $method['label']; ?>" value="<?= $method['value'] ?>"/>
+
+                            <img src="<?= $this->_getHelper()->getCardImagePath() . $method['slug']; ?>.svg"
+                                 alt="<?= $this->__($method['label']) ?>" title="<?= $this->__($method['label']) ?>"
+                            />
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="cc_grid" id="pagseguro_one_cc">
+                    <?php if ($quote->getCheckoutMethod() != 'guest' && $canSave && !$useEncryption): ?>
+                        <label for="ckSaveCard">
+                            <?= $this->__('Save this card?') ?>
+                        </label>
+                        <input type="checkbox" name="payment[save_card]" id="ckSaveCard"/>
+                    <?php endif; ?>
+
+                    <div class="num input-box div-cc-number">
+                        <label class="required">
+                            <em>*</em><?= $this->__('Card Number') ?>
+                        </label>
+                        <input type="number" placeholder="<?= $this->__('Type Only Numbers') ?>"
+                               id="<?= $code ?>_number" name="payment[cc_number]"
+                               title="<?= $this->__('Card Number') ?>"
+                               class="input-text validate-cc-number-pagseguropayment required-entry"/>
+                    </div>
+
+                    <div class="div_cc_name nome input-box">
+                        <label for="<?= $code ?>_owner" class="required">
+                            <em>*</em><?= $this->__('Owner Name') ?>
+                        </label>
+
+                        <input type="text" placeholder="<?= $this->__('Exactly as the card') ?>"
+                               title="<?= $this->__('Owner Name') ?>" class="required-entry input-text"
+                               id="<?= $code ?>_owner" name="payment[cc_owner]"/>
+                    </div>
+
+                    <div class="exp input-box div_cc_expiration">
+                        <label for="<?= $code ?>_expiration_month" class="required">
+                            <em>*</em><?= $this->__('Validate') ?>
+                        </label>
+
+                        <span class="month">
+                            <select id="<?= $code ?>_expiration_month" name="payment[cc_exp_month]"
+                                    class="exp-month required-entry expiration">
+                                <?php $ccExpMonth = $this->getInfoData('cc_exp_month') ?>
+                                <?php foreach ($this->getCcMonths() as $key => $label): ?>
+                                    <?php $value = is_numeric($key) ? $key + 1 : null; ?>
+                                    <option value="<?= $value ?>">
+                                        <?= $label ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+
+                        <span class="year">
+                            <?php $ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                            <select id="<?= $code ?>_expiration_year" style="width:103px;" name="payment[cc_exp_year]"
+                                    class="exp-year required-entry expiration">
+                                <?php foreach ($this->getCcYears() as $key => $year): ?>
+                                    <?php $value = ((int)$year) > 0 ? (int)$year : null; ?>
+                                    <option value="<?= $value ?>">
+                                        <?= $year ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+                    </div>
+
+                    <div class="input-box div_cvv">
+                        <label for="<?= $code ?>_cvv" class="required">
+                            <em>*</em><?= $this->__('CVV') ?>
+                        </label>
+                        <input type="text" title="<?= $this->__('CVV') ?>" class="required-entry input-text cvv"
+                               id="<?= $code ?>_cid" <?= !$useEncryption ? 'name="payment[cc_cid]"' : null ?>/>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($useEncryption) : ?>
+                <input name="payment[encrypted]" id="encrypted_card" type="hidden">
+            <?php endif; ?>
+
+            <?php if (!$this->_getHelper()->getConfig('installments', $code)): ?>
+                <input type="hidden" name="payment[installments]" value="1"/>
+            <?php else: ?>
+                <div class="pars input-box">
+                    <label for="pagseguro_one_cc_installments" class="required">
+                        <em>*</em><?= $this->__('Installments Number') ?>
+                    </label>
+
+                    <select name="payment[installments]" id="pagseguro_one_cc_installments" class="required-entry">
+                        <option value=""><?= $this->__('Choose'); ?></option>
+                        <?php foreach ($installments as $installment): ?>
+                            <option value="<?= $installment['value']; ?>">
+                                <?= $this->__($installment['label']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+
+            <input type="hidden" name="payment[base_grand_total]" value="<?= $baseGrandTotal; ?>"/>
+        </div>
+    </div>
+</fieldset>
+
+<script type="text/javascript">
+    Validation.add(
+        'validate-cc-number-pagseguropayment',
+        'Please enter a valid credit card number.',
+        function (v, elm) {
+            // remove non-numerics
+            var ccTypeContainer = $(elm.id.substr(0, elm.id.indexOf('-cc-number')) + '-cc-type');
+            if (
+                ccTypeContainer
+                && typeof Validation.creditCartTypes.get(ccTypeContainer.value) != 'undefined'
+                && Validation.creditCartTypes.get(ccTypeContainer.value)[2] == false
+            ) {
+                if (Validation.get('IsEmpty').test(v) || !Validation.get('validate-digits').test(v)) {
+                    return false;
+                }
+            }
+            return pagseguropayment.validateCreditCard(v);
+        }
+    );
+
+    <?php if ($useEncryption) : ?>
+        $j(document).ready(function () {
+            $j('#payment-buttons-container button').on('click', function () {
+                let encriptedData = pagseguropayment.encryptCard('<?= $code ?>', '<?= $this->_getHelper()->getPublicKey() ?>');
+                $j('#encrypted_card').val(encriptedData);
+            });
+        });
+    <?php endif; ?>
+
+    $j('#useSavedCard').click(function () {
+        $j(this).css('display', 'none');
+        $j('.cc_form').css('display', 'none');
+        $j('#savedCards').css('display', 'block');
+        $j('#useNewCard').css('display', 'block');
+        $j('#pagseguroUseSavedCard').val(1);
+    });
+
+    $j('#useNewCard').click(function () {
+        $j(this).css('display', 'none');
+        $j('.cc_form').css('display', 'block');
+        $j('#savedCards').css('display', 'none');
+        $j('#useSavedCard').css('display', 'block');
+        $j('#pagseguroUseSavedCard').val(0);
+    });
+
+    $j('#payment_form_<?= $code ?> input.pagseguro-cc-type').click(function () {
+        $j('#payment_form_<?= $code ?> input.pagseguro-cc-type').parent().find('img').removeClass('on');
+        $j('#payment_form_<?= $code ?> input.pagseguro-cc-type').parent().find('img').addClass('off');
+
+        $j(this).parent().find('img').removeClass('off');
+        $j(this).parent().find('img').addClass('on');
+    });
+
+    $j('#payment_form_<?= $code ?> #<?= $code ?>_number').on('click, keyup', function () {
+        var ccType = pagseguropayment.identifyCcNumber($j(this).val());
+        $j('#payment_form_<?= $code ?> input.pagseguro-cc-type').each(function () {
+            if ($j(this).val() == ccType) {
+                $j(this).click();
+            }
+        });
+    });
+
+    var pagseguropaymentCcType = pagseguropayment.identifyCcNumber($j('#payment_form_<?= $code ?> #<?= $code ?>_number').val());
+    $j('#payment_form_<?= $code ?> input.pagseguro-cc-type').each(function () {
+        if ($j(this).val() == pagseguropaymentCcType) {
+            $j(this).click();
+        }
+    });
+</script>
+<?php endif; ?>

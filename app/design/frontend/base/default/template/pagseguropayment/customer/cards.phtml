@@ -1,0 +1,33 @@
+<?php
+/** @var PagSeguro_Payment_Block_Customer_Cards $this */
+$cards = $this->getCollection();
+?>
+<?php if ($this->count()) : ?>
+<div>
+    <h2><?= $this->__('PagSeguro - Saved Cards')?></h2>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th><?= $this->__('Card') ?></th>
+            <th><?= $this->__('Action') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php /** @var PagSeguro_Payment_Model_Card $card */?>
+        <?php foreach ($cards as $card) : ?>
+            <tr>
+                <td><?= $card->getDescription() ?></td>
+                <td>
+                    <a href="<?= $this->getUrl('pagseguropayment/cards/delete', array('card_id' => $card->getId()))?>">
+                        <?= $this->__('Delete Card') ?>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php else: ?>
+    <span><?= $this->__('No records founded.') ?></span>
+<?php endif; ?>

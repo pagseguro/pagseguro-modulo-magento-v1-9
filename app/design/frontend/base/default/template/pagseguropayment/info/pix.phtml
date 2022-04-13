@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @var PagSeguro_Payment_Block_Info_Pix $this
+ */
+$info = $this->getInfo();
+
+?>
+
+<?php if ($info): ?>
+
+    <?php $additionalInformation = $info->getAdditionalInformation();?>
+    <ul>
+        <?php if (isset($additionalInformation['transaction_id'])): ?>
+            <li>
+                <strong><?= $this->__("Transaction Id: %s", $this->escapeHtml($additionalInformation['transaction_id'])) ?></strong>
+            </li>
+        <?php endif; ?>
+
+        <?php if (isset($additionalInformation['qrcode_image'])): ?>
+            <li>
+              <img src="<?php $additionalInformation['qrcode_image'] ?>">
+
+            </li>
+        <?php endif; ?>
+    </ul>
+<?php endif; ?>

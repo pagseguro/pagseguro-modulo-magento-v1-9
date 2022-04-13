@@ -1,0 +1,55 @@
+<?php
+/** @var PagSeguro_Payment_Block_Info_Twocc $this */
+$code = $this->getMethod()->getCode();
+$info = $this->getInfo();
+?>
+
+<fieldset class="form-list">
+    <div id="payment_form_<?= $this->getMethod()->getCode() ?>" class="case pagseguro-form">
+        <?php foreach ($this->getCardsPrefix() as $prefix) : ?>
+            <div class="card-entry pagseguro-card-entry">
+                <div class="entry-title">
+                    <span>
+                        <?= $prefix == 'first_' ? $this->__("FIRST CREDIT CARD") : $this->__("SECOND CREDIT CARD") ?></span>
+                </div>
+
+                <?php if ($ccDescription = $info->getAdditionalInformation("{$prefix}cc_description")) : ?>
+                    <p><?= $this->__('Card: %s', $ccDescription); ?></p>
+                <?php elseif ($ccNumber = $this->getCcNumber($info->getAdditionalInformation("{$prefix}cc_number"))) : ?>
+                    <p><?= $this->__('Card Number: %s', $ccNumber); ?></p>
+
+                    <?php if ($ccOwner = $info->getAdditionalInformation("{$prefix}cc_owner")) : ?>
+                        <p><?= $this->__('Card Owner: %s', $ccOwner); ?></p>
+                    <?php endif; ?>
+
+                    <?php if ($ccBrand = $info->getAdditionalInformation("{$prefix}cc_type")) : ?>
+                        <p><?= $this->__('Card Brand: %s', $ccBrand); ?></p>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php
+                $installments = $info->getAdditionalInformation("{$prefix}cc_installments");
+                $textInterest = '';
+                if ($interestRate = $info->getAdditionalInformation("{$prefix}cc_interest_rate"))
+                    $textInterest = $this->__('(interest of %s)', $interestRate . '%');
+                ?>
+
+                <?php if (!$info->getAdditionalInformation('recurring_profile') && $installments): ?>
+                    <p>
+                        <?= $this->__('Installments: %s', $installments . 'x') ?>
+                        <?= $this->__('of %s', number_format($info->getAdditionalInformation("{$prefix}cc_installment_value"), 2, ',', '.')); ?>
+                        <?= $textInterest; ?>
+                    </p>
+
+                    <?php if ($totalWithInterest = $info->getAdditionalInformation("{$prefix}cc_total_with_interest")): ?>
+                        <p><?= $this->__('Total: %s', $this->helper('core')->currency($totalWithInterest)); ?></p>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if ($tid = $info->getAdditionalInformation("{$prefix}cc_order_id")): ?>
+                    <p><?= $this->__("TID: %s", $tid); ?></p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+</fieldset>
+

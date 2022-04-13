@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <pagseguropayment_default>
+        <reference name="head">
+            <action method="addItem">
+                <type>js_css</type><script>pagseguropayment/payment.css</script>
+            </action>
+        </reference>
+    </pagseguropayment_default>
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>pagseguropayment/payment.js</script>
+            </action>
+
+            <action method="addItem">
+                <type>js_css</type><script>pagseguropayment/payment.css</script>
+            </action>
+
+            <block type="core/text" name="fingerprint">
+                <action method="setText">
+                    <text>
+                        <![CDATA[<script type="text/javascript" src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_index>
+
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label">
+                <name>pagseguro_payment_cards</name>
+                <path>pagseguropayment/cards</path>
+                <label>PagSeguro - Cards</label>
+            </action>
+        </reference>
+    </customer_account>
+
+    <pagseguropayment_cards_index>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="setTitle" translate="title" module="pagseguropayment">
+                <title>PagSeguro - Cards</title>
+            </action>
+        </reference>
+
+        <reference name="my.account.wrapper">
+            <block type="pagseguropayment/customer_cards" name="pagseguro.payment.customer.cards" template="pagseguropayment/customer/cards.phtml"/>
+        </reference>
+    </pagseguropayment_cards_index>
+
+    <sales_order_view>
+        <update handle="pagseguropayment_default"/>
+        <reference name="order_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_view>
+    <sales_order_print>
+        <update handle="pagseguropayment_default"/>
+        <reference name="order_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_print>
+    <sales_email_order_items>
+        <update handle="pagseguropayment_default"/>
+        <reference name="order_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_email_order_items>
+
+    <sales_order_invoice>
+        <update handle="pagseguropayment_default"/>
+        <reference name="invoice_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_invoice>
+    <sales_order_printinvoice>
+        <update handle="pagseguropayment_default"/>
+        <reference name="invoice_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_printinvoice>
+    <sales_email_order_invoice_items>
+        <update handle="pagseguropayment_default"/>
+        <reference name="invoice_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_email_order_invoice_items>
+
+    <sales_order_creditmemo>
+        <update handle="pagseguropayment_default"/>
+        <reference name="creditmemo_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_creditmemo>
+    <sales_order_printcreditmemo>
+        <update handle="pagseguropayment_default"/>
+        <reference name="creditmemo_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_order_printcreditmemo>
+    <sales_email_order_creditmemo_items>
+        <update handle="pagseguropayment_default"/>
+        <reference name="creditmemo_totals">
+            <block type="pagseguropayment/sales_order_total_interest" name="pagseguropayment.sales.order.total.interest" />
+        </reference>
+    </sales_email_order_creditmemo_items>
+</layout>
