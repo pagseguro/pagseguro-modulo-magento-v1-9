@@ -1,5 +1,8 @@
 
-![N|Solid](https://upload.wikimedia.org/wikipedia/commons/8/80/Logo_PagSeguro.png)
+# Esse módulo foi DEPRECIADO!!!!!
+**Recomendamos usar o novo módulo Magento1** da Ricardo Martins, na url: https://github.com/r-martins/PagSeguro-Magento-Transparente
+
+---
 
 # PagSeguro - Módulo Magento 1.9
 ## _API Charge_
